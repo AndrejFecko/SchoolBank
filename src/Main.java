@@ -2,6 +2,7 @@ import account.*;
 import person.AccountHolder;
 import person.AccountHolderFactory;
 import transfer.DepositService;
+import transfer.TransferLoggerService;
 import transfer.TransferService;
 
 public class Main {
@@ -11,12 +12,13 @@ public class Main {
 
         AccountHolderFactory AccountHolderFactory = new AccountHolderFactory();
 
-        BankAccount currentAccount = new CurrentAccount(AccountHolder);
-        BankAccount businessAccount = new BusinessAccount(holder);
-        BankAccount studentAccount = new StudentAccount(holder, "DELTA");
+        BankAccount currentAccount = createCurrentAccount("CZ001", holder);
+        BankAccount businessAccount = createBusinessAccount("CZ002", holder);
+        BankAccount studentAccount = createStudentAccount("CZ003", holder, "DELTA");
 
-        DepositService depositService = new DepositService();
-        TransferService transferService = new TransferService();
+        TransferLoggerService logger = new TransferLoggerService();
+        DepositService depositService = new DepositService(logger);
+        TransferService transferService = new TransferService(logger);
 
         depositService.deposit(currentAccount, 5000);
         depositService.deposit(businessAccount, 10000);
@@ -46,6 +48,9 @@ public class Main {
         } catch (IllegalArgumentException e) {
             IO.println("Zachycena chyba: " + e.getMessage());
         }
+
+        logger.getRecords().forEach(r ->
+                IO.println(r.getTimestamp() + " " + r.getType() + " " + r.getAccountUuid() + " " + r.getAmount()));
     }
 
     private static void printBalances(BankAccount current, BankAccount business, BankAccount student) {

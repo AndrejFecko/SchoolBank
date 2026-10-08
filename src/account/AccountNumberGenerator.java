@@ -1,18 +1,58 @@
 package account;
 
-import java.security.SecureRandom;
-import java.util.Random;
+import notifier.ConsoleNotifierService;
+import notifier.NotifierService;
+import person.AccountHolder;
+import java.util.UUID;
 
-public class AccountNumberGenerator {
+public abstract class BankAccount {
 
-    private static final String PREFIX = "CZ";
-    private static final Random RANDOM = new SecureRandom();
-    public String generate() {
-        return generate(PREFIX);
+    private String uuid;
+    private AccountHolder accountHolder;
+    private String accountNumber;
+    private double balance;
+
+    private NotifierService notifier = new ConsoleNotifierService();
+
+    public BankAccount(String accountNumber, AccountHolder accountHolder) {
+        this.uuid = UUID.randomUUID().toString();
+        this.balance = 0;
+        this.accountNumber = accountNumber;
+        this.accountHolder = accountHolder;
     }
-    public String generate(String prefix) {
-        StringBuilder string = new StringBuilder(prefix != null ? prefix : "");
-        string.append(RANDOM.nextInt(10));
-        return string.toString();
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public AccountHolder getAccountHolder() {
+        return accountHolder;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public void add(double amount){
+        if (amount<0) {
+            throw new IllegalArgumentException("nice try");
+        }
+        this.balance += amount;
+        notifier.notify("money added");
+    }
+
+    public void sub(double amount){
+        if (amount<0) {
+            throw new IllegalArgumentException("nice try");
+        }
+        this.balance -= amount;
     }
 }
