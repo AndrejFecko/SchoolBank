@@ -1,16 +1,14 @@
 package person;
 
-import java.util.UUID;
-
 public class AccountHolder {
     private String uuid;
     private String name;
     private String lastName;
 
-    public AccountHolder(String name, String lastName) {
+    public AccountHolder(String uuid,String name) {
         this.name = name;
         this.lastName = lastName;
-        this.uuid = UUID.randomUUID().toString();
+        this.uuid = uuid;
     }
 
     public String getName() {

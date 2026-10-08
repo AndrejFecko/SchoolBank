@@ -1,16 +1,19 @@
 import account.*;
 import person.AccountHolder;
+import person.AccountHolderFactory;
 import transfer.DepositService;
 import transfer.TransferService;
 
 public class Main {
 
     public static void main(String[] args) {
-        AccountHolder holder = new AccountHolder("Daniel", "Bisko");
+        AccountHolder holder = new AccountHolder("Andrej", "Fecko");
 
-        BankAccount currentAccount = new CurrentAccount("CZ001", holder);
-        BankAccount businessAccount = new BusinessAccount("CZ002", holder);
-        BankAccount studentAccount = new StudentAccount("CZ003", holder, "DELTA");
+        AccountHolderFactory AccountHolderFactory = new AccountHolderFactory();
+
+        BankAccount currentAccount = new CurrentAccount(AccountHolder);
+        BankAccount businessAccount = new BusinessAccount(holder);
+        BankAccount studentAccount = new StudentAccount(holder, "DELTA");
 
         DepositService depositService = new DepositService();
         TransferService transferService = new TransferService();
