@@ -1,6 +1,6 @@
 package transfer;
 
-import account.BankAccount;
+import account.BankAccountFactory;
 import account.BusinessAccount;
 import account.StudentAccount;
 
@@ -8,7 +8,7 @@ public class WithdrawService {
     private static final double BUSINESS_SERVICE_FEE = 0.01;
     private static final int STUDENT_OVERDRAFT_LIMIT = -5000;
 
-    public void withdraw(BankAccount account, double amount) {
+    public void withdraw(BankAccountFactory account, double amount) {
         if (account == null) {
             throw new IllegalArgumentException("Účet nesmí být null.");
         }
@@ -31,7 +31,7 @@ public class WithdrawService {
         account.setBalance(newBalance);
     }
 
-    private int getWithdrawLimit(BankAccount account) {
+    private int getWithdrawLimit(BankAccountFactory account) {
         if (account instanceof StudentAccount) {
             return STUDENT_OVERDRAFT_LIMIT;
         }

@@ -12,9 +12,9 @@ public class Main {
 
         AccountHolderFactory AccountHolderFactory = new AccountHolderFactory();
 
-        BankAccount currentAccount = createCurrentAccount("CZ001", holder);
-        BankAccount businessAccount = createBusinessAccount("CZ002", holder);
-        BankAccount studentAccount = createStudentAccount("CZ003", holder, "DELTA");
+        BankAccountFactory currentAccount = createCurrentAccount("CZ001", holder);
+        BankAccountFactory businessAccount = createBusinessAccount("CZ002", holder);
+        BankAccountFactory studentAccount = createStudentAccount("CZ003", holder, "DELTA");
 
         TransferLoggerService logger = new TransferLoggerService();
         DepositService depositService = new DepositService(logger);
@@ -53,7 +53,7 @@ public class Main {
                 IO.println(r.getTimestamp() + " " + r.getType() + " " + r.getAccountUuid() + " " + r.getAmount()));
     }
 
-    private static void printBalances(BankAccount current, BankAccount business, BankAccount student) {
+    private static void printBalances(BankAccountFactory current, BankAccountFactory business, BankAccountFactory student) {
         IO.println("Current:  " + current.getBalance() + " Kč");
         IO.println("Business: " + business.getBalance() + " Kč");
         IO.println("Student:  " + student.getBalance() + " Kč");

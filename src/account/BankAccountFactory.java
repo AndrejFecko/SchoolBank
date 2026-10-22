@@ -6,7 +6,7 @@ import person.AccountHolder;
 import java.io.Serializable;
 import java.util.UUID;
 
-public abstract class BankAccount implements Serializable {
+public abstract class BankAccountFactory implements Serializable {
 
     private String uuid;
     private AccountHolder accountHolder;
@@ -15,7 +15,7 @@ public abstract class BankAccount implements Serializable {
 
     private transient NotifierService notifier = new ConsoleNotifierService();
 
-    public BankAccount(String accountNumber, AccountHolder accountHolder) {
+    public BankAccountFactory(String accountNumber, AccountHolder accountHolder) {
         this.uuid = UUID.randomUUID().toString();
         this.balance = 0;
         this.accountNumber = accountNumber;

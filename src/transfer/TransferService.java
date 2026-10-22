@@ -1,6 +1,6 @@
 package transfer;
 
-import account.BankAccount;
+import account.BankAccountFactory;
 
 public class TransferService {
     private final WithdrawService withdrawService;
@@ -15,7 +15,7 @@ public class TransferService {
         this.depositService = depositService;
     }
 
-    public void transfer(BankAccount fromAccount, BankAccount toAccount, double amount) {
+    public void transfer(BankAccountFactory fromAccount, BankAccountFactory toAccount, double amount) {
         if (fromAccount == null || toAccount == null) {
             throw new IllegalArgumentException("Odesílací ani cílový účet nesmí být null.");
         }
