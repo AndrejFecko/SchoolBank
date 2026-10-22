@@ -1,36 +1,62 @@
 package account;
 
+import notifier.ConsoleNotifierService;
+import notifier.NotifierService;
 import person.AccountHolder;
+import java.io.Serializable;
+import java.util.UUID;
 
-public class BankAccountFactory {
+public abstract class BankAccount implements Serializable {
 
-    private final AccountNumberGenerator accountNumberGenerator;
+    private String uuid;
+    private AccountHolder accountHolder;
+    private String accountNumber;
+    private double balance;
 
-    public BankAccountFactory() {
-        this(new AccountNumberGenerator());
+    private transient NotifierService notifier = new ConsoleNotifierService();
+
+    public BankAccount(String accountNumber, AccountHolder accountHolder) {
+        this.uuid = UUID.randomUUID().toString();
+        this.balance = 0;
+        this.accountNumber = accountNumber;
+        this.accountHolder = accountHolder;
     }
 
-    public BankAccountFactory(AccountNumberGenerator accountNumberGenerator) {
-        this.accountNumberGenerator = accountNumberGenerator;
+    public String getUuid() {
+        return uuid;
     }
 
-    public CurrentAccount createCurrentAccount(AccountHolder accountHolder) {
-        String accountNumber = accountNumberGenerator.generate();
-        return new CurrentAccount(accountNumber, accountHolder);
+    public AccountHolder getAccountHolder() {
+        return accountHolder;
     }
 
-    public BusinessAccount createBusinessAccount(AccountHolder accountHolder) {
-        String accountNumber = accountNumberGenerator.generate();
-        return new BusinessAccount(accountNumber, accountHolder);
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    public StudentAccount createStudentAccount(AccountHolder accountHolder, String schoolName) {
-        String accountNumber = accountNumberGenerator.generate();
-        return new StudentAccount(accountNumber, accountHolder, schoolName);
+    public double getBalance() {
+        return balance;
     }
 
-    public SavingsAccount createSavingsAccount(AccountHolder accountHolder) {
-        String accountNumber = accountNumberGenerator.generate();
-        return new SavingsAccount(accountNumber, accountHolder);
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public void add(double amount){
+        if (amount<0) {
+            throw new IllegalArgumentException("nice try");
+        }
+        this.balance += amount;
+
+        if (notifier != null) {
+            notifier.notify("money added");
+        }
+    }
+
+    public void sub(double amount){
+        if (amount<0) {
+            throw new IllegalArgumentException("nice try");
+        }
+        this.balance -= amount;
     }
 }
