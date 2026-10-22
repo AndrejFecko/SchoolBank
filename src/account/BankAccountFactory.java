@@ -1,62 +1,26 @@
 package account;
 
-import notifier.ConsoleNotifierService;
-import notifier.NotifierService;
 import person.AccountHolder;
-import java.io.Serializable;
-import java.util.UUID;
 
-public abstract class BankAccountFactory implements Serializable {
+public class BankAccountFactory {
 
-    private String uuid;
-    private AccountHolder accountHolder;
-    private String accountNumber;
-    private double balance;
-
-    private transient NotifierService notifier = new ConsoleNotifierService();
-
-    public BankAccountFactory(String accountNumber, AccountHolder accountHolder) {
-        this.uuid = UUID.randomUUID().toString();
-        this.balance = 0;
-        this.accountNumber = accountNumber;
-        this.accountHolder = accountHolder;
+    public CurrentAccount newCurrentAccount(AccountHolder accountHolder) {
+        String accountNumber = ANG.generate();
+        return new CurrentAccount(accountNumber, accountHolder);
     }
 
-    public String getUuid() {
-        return uuid;
+    public BusinessAccount newBusinessAccount(AccountHolder accountHolder) {
+        String accountNumber = ANG.generate();
+        return new BusinessAccount(accountNumber, accountHolder);
     }
 
-    public AccountHolder getAccountHolder() {
-        return accountHolder;
+    public StudentAccount newStudentAccount(AccountHolder accountHolder, String schoolName) {
+        String accountNumber = ANG.generate();
+        return new StudentAccount(accountNumber, accountHolder, schoolName);
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
-
-    public void add(double amount){
-        if (amount<0) {
-            throw new IllegalArgumentException("nice try");
-        }
-        this.balance += amount;
-
-        if (notifier != null) {
-            notifier.notify("money added");
-        }
-    }
-
-    public void sub(double amount){
-        if (amount<0) {
-            throw new IllegalArgumentException("nice try");
-        }
-        this.balance -= amount;
+    public SavingsAccount newSavingsAccount(AccountHolder accountHolder) {
+        String accountNumber = ANG.generate();
+        return new SavingsAccount(accountNumber, accountHolder);
     }
 }

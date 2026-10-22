@@ -1,40 +1,43 @@
 package transfer;
 
-import account.BankAccountFactory;
+import account.BankAccount;
 import account.BusinessAccount;
 import account.StudentAccount;
+import history.TransferLoggerService;
 
 public class WithdrawService {
     private static final double BUSINESS_SERVICE_FEE = 0.01;
-    private static final int STUDENT_OVERDRAFT_LIMIT = -5000;
 
-    public void withdraw(BankAccountFactory account, double amount) {
-        if (account == null) {
-            throw new IllegalArgumentException("Účet nesmí být null.");
-        }
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Vybíraná částka musí být větší než 0.");
-        }
+    private TransferLoggerService transferLoggerService;
 
-        double fee = 0.0;
+    public WithdrawService(TransferLoggerService transferLoggerService) {
+        this.transferLoggerService = transferLoggerService;
+    }
+
+    public void withdraw(BankAccount account, double amount) {
+        double newBalance = account.getBalance() - amount;
+
         if (account instanceof BusinessAccount) {
-            fee = amount * BUSINESS_SERVICE_FEE;
+            double serviceFee = amount * BUSINESS_SERVICE_FEE;
+
+            newBalance -= serviceFee;
         }
 
-        double totalDeduction = amount + fee;
-        double newBalance = account.getBalance() - totalDeduction;
-
-        if (newBalance < getWithdrawLimit(account)) {
-            throw new IllegalArgumentException("Nedostatečný zůstatek na účtu.");
+        if (newBalance < getWithDrawLimit(account)) {
+            throw new IllegalArgumentException("Cannot subtract negative amount");
         }
 
         account.setBalance(newBalance);
+
+        transferLoggerService.logWithdraw(account.getAccountNumber(), amount);
     }
 
-    private int getWithdrawLimit(BankAccountFactory account) {
+    private int getWithDrawLimit(BankAccount account) {
         if (account instanceof StudentAccount) {
-            return STUDENT_OVERDRAFT_LIMIT;
+            return -5000;
         }
+
         return 0;
     }
+
 }

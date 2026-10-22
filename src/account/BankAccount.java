@@ -3,17 +3,16 @@ package account;
 import notifier.ConsoleNotifierService;
 import notifier.NotifierService;
 import person.AccountHolder;
-import java.io.Serializable;
 import java.util.UUID;
 
-public abstract class BankAccount implements Serializable {
+public abstract class BankAccount {
 
     private String uuid;
     private AccountHolder accountHolder;
     private String accountNumber;
     private double balance;
 
-    private transient NotifierService notifier = new ConsoleNotifierService();
+    private NotifierService notifier = new ConsoleNotifierService();
 
     public BankAccount(String accountNumber, AccountHolder accountHolder) {
         this.uuid = UUID.randomUUID().toString();
@@ -43,18 +42,16 @@ public abstract class BankAccount implements Serializable {
     }
 
     public void add(double amount){
-        if (amount<0) {
-            throw new IllegalArgumentException("nice try");
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative.");
         }
         this.balance += amount;
-        if (notifier != null) {
-            notifier.notify("money added");
-        }
+        notifier.notify("Funds deposited successfully.");
     }
 
     public void sub(double amount){
-        if (amount<0) {
-            throw new IllegalArgumentException("nice try");
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative.");
         }
         this.balance -= amount;
     }

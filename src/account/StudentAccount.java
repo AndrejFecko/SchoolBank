@@ -2,7 +2,7 @@ package account;
 
 import person.AccountHolder;
 
-public class StudentAccount extends BankAccountFactory {
+public class StudentAccount extends BankAccount{
 
     private String schoolName;
 

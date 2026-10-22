@@ -1,32 +1,59 @@
 package transfer;
 
-import account.BankAccountFactory;
+import account.BankAccount;
+import account.BusinessAccount;
+import account.StudentAccount;
+import history.TransferLoggerService;
 
 public class TransferService {
-    private final WithdrawService withdrawService;
-    private final DepositService depositService;
 
-    public TransferService() {
-        this(new WithdrawService(), new DepositService());
+    private static final double BUSINESS_TRANSFER_FEE_RATE = 0.003;
+
+    private TransferLoggerService transferLoggerService;
+
+    public TransferService(TransferLoggerService transferLoggerService) {
+        this.transferLoggerService = transferLoggerService;
     }
 
-    public TransferService(WithdrawService withdrawService, DepositService depositService) {
-        this.withdrawService = withdrawService;
-        this.depositService = depositService;
-    }
-
-    public void transfer(BankAccountFactory fromAccount, BankAccountFactory toAccount, double amount) {
+    public void transfer(BankAccount fromAccount, BankAccount toAccount, double amount) {
         if (fromAccount == null || toAccount == null) {
             throw new IllegalArgumentException("Odesílací ani cílový účet nesmí být null.");
         }
-        if (fromAccount == toAccount || (fromAccount.getUuid() != null && fromAccount.getUuid().equals(toAccount.getUuid()))) {
+
+        if (fromAccount == toAccount || fromAccount.getUuid().equals(toAccount.getUuid())) {
             throw new IllegalArgumentException("Nelze převádět prostředky na stejný účet.");
         }
+
         if (amount <= 0) {
             throw new IllegalArgumentException("Převáděná částka musí být větší než 0.");
         }
 
-        withdrawService.withdraw(fromAccount, amount);
-        depositService.deposit(toAccount, amount);
+        double fee = 0.0;
+        if (fromAccount instanceof BusinessAccount) {
+            fee = amount * BUSINESS_TRANSFER_FEE_RATE;
+        }
+
+        double totalDeduction = amount + fee;
+        double newBalance = fromAccount.getBalance() - totalDeduction;
+
+        if (newBalance < getWithdrawLimit(fromAccount)) {
+            throw new IllegalArgumentException("Nedostatečný zůstatek na účtu.");
+        }
+
+        fromAccount.setBalance(newBalance);
+        toAccount.setBalance(toAccount.getBalance() + amount);
+
+        transferLoggerService.logTransfer(
+                fromAccount.getAccountNumber(),
+                toAccount.getAccountNumber(),
+                amount
+        );
+    }
+
+    private int getWithdrawLimit(BankAccount account) {
+        if (account instanceof StudentAccount) {
+            return -5000;
+        }
+        return 0;
     }
 }

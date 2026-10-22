@@ -1,1 +1,1 @@
-Fecko Andrej
+Andrej Fecko

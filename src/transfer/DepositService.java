@@ -1,24 +1,29 @@
 package transfer;
 
-import account.BankAccountFactory;
+import account.BankAccount;
 import account.StudentAccount;
+import history.TransferLoggerService;
 
 public class DepositService {
     private static final double STUDENT_BONUS = 0.005;
 
-    public void deposit(BankAccountFactory bankAccount, double amount) {
-        if (bankAccount == null) {
-            throw new IllegalArgumentException("Účet nesmí být null.");
-        }
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Vkládaná částka musí být větší než 0.");
-        }
+    private TransferLoggerService transferLoggerService;
 
-        double bonus = 0.0;
+    public DepositService(TransferLoggerService transferLoggerService) {
+        this.transferLoggerService = transferLoggerService;
+    }
+
+    public void deposit(BankAccount bankAccount, double amount) {
+        double newBalance = bankAccount.getBalance() + amount;
+
         if (bankAccount instanceof StudentAccount) {
-            bonus = amount * STUDENT_BONUS;
+            double depositBonus = amount * STUDENT_BONUS;
+
+            newBalance += depositBonus;
         }
 
-        bankAccount.setBalance(bankAccount.getBalance() + amount + bonus);
+        bankAccount.setBalance(newBalance);
+
+        transferLoggerService.logDeposit(bankAccount.getAccountNumber(), amount);
     }
 }
