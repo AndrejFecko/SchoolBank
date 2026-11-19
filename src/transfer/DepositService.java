@@ -7,7 +7,7 @@ import history.TransferLoggerService;
 public class DepositService {
     private static final double STUDENT_BONUS = 0.005;
 
-    private TransferLoggerService transferLoggerService;
+    private final TransferLoggerService transferLoggerService;
 
     public DepositService(TransferLoggerService transferLoggerService) {
         this.transferLoggerService = transferLoggerService;

@@ -10,7 +10,11 @@ import java.util.List;
 public class BankAccountGsonSerializer implements BankAccountSerializer {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final BankAccountSerializeFactory bankAccountSerializeFactory = new BankAccountSerializeFactory();
+    private final BankAccountSerializeFactory bankAccountSerializeFactory;
+
+    public BankAccountGsonSerializer(BankAccountSerializeFactory bankAccountSerializeFactory) {
+        this.bankAccountSerializeFactory = bankAccountSerializeFactory;
+    }
 
     @Override
     public String serializeAll(List<BankAccount> bankAccounts) {

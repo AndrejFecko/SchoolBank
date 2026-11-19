@@ -1,7 +1,6 @@
 package person;
 
 import java.util.UUID;
-import java.util.Random;
 
 public class AccountHolderFactory {
     public AccountHolder newAccountHolder (String name, String lastName){

@@ -1,7 +1,5 @@
 package person;
 
-import java.util.UUID;
-
 public class AccountHolder {
     private String uuid;
     private String name;

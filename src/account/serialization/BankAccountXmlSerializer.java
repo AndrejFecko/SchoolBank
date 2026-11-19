@@ -14,7 +14,11 @@ import java.util.List;
 public class BankAccountXmlSerializer implements BankAccountSerializer {
 
     private final XmlMapper xmlMapper = new XmlMapper();
-    private final BankAccountSerializeFactory bankAccountSerializeFactory = new BankAccountSerializeFactory();
+    private final BankAccountSerializeFactory bankAccountSerializeFactory;
+
+    public BankAccountXmlSerializer(BankAccountSerializeFactory bankAccountSerializeFactory) {
+        this.bankAccountSerializeFactory = bankAccountSerializeFactory;
+    }
 
     @Override
     public String serializeAll(List<BankAccount> bankAccounts) {

@@ -1,12 +1,13 @@
 package account;
 
+import notifier.NotifierService;
 import person.AccountHolder;
 
 public class SavingsAccount extends BankAccount implements InterestPoint{
 
     public static final float INTEREST_RATE = 0.5f;
-    public SavingsAccount(String accountNumber, AccountHolder accountHolder) {
-        super(accountNumber, accountHolder);
+    public SavingsAccount(String accountNumber, AccountHolder accountHolder, NotifierService notifier) {
+        super(accountNumber, accountHolder, notifier);
     }
 
     @Override

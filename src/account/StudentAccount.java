@@ -1,5 +1,6 @@
 package account;
 
+import notifier.NotifierService;
 import person.AccountHolder;
 
 public class StudentAccount extends BankAccount{
@@ -9,9 +10,10 @@ public class StudentAccount extends BankAccount{
     public StudentAccount(
             String accountNumber,
             AccountHolder accountHolder,
-            String schoolName
+            String schoolName,
+            NotifierService notifier
     ) {
-        super(accountNumber, accountHolder);
+        super(accountNumber, accountHolder, notifier);
 
         this.schoolName = schoolName;
     }

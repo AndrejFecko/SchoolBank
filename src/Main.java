@@ -1,10 +1,10 @@
 import account.*;
-import account.serialization.BankAccountGsonSerializer;
 import account.serialization.BankAccountSerializer;
-import account.serialization.BankAccountXmlSerializer;
+import container.Container;
+import container.ContainerFactory;
 import history.TransferLoggerService;
 import person.AccountHolder;
-import person.AccountHolderFactory;
+import person.AccountHolderService;
 import transfer.DepositService;
 import transfer.TransferService;
 
@@ -12,45 +12,32 @@ public class Main {
 
     public static void main(String[] args) {
 
-        AccountHolderFactory creator = new AccountHolderFactory();
-        AccountHolder holder = creator.newAccountHolder("Daniel", "Bisko");
+        ContainerFactory containerFactory = new ContainerFactory();
+        Container container = containerFactory.newContainerWithLogging();
 
-        AccountService original = new BankAccountService();
+        AccountHolderService accountHolderService = container.getAccountHolderService();
+        AccountService accountService = container.getAccountService();
+        DepositService depositService = container.getDepositService();
+        TransferService transferService = container.getTransferService();
+        TransferLoggerService transferLoggerService = container.getTransferLoggerService();
+        BankAccountSerializer jsonSerializer = container.getJsonSerializer();
+        BankAccountSerializer xmlSerializer = container.getXmlSerializer();
 
-        IO.println("ORIGINAL");
+        AccountHolder holder = accountHolderService.createAccountHolder("Daniel", "Bisko");
+
+        IO.println("CREATING ACCOUNTS");
         IO.println("=========");
-        BankAccount currentAccount = original.createCurrentAccount(holder);
+        BankAccount currentAccount = accountService.createCurrentAccount(holder);
+        BankAccount businessAccount = accountService.createBusinessAccount(holder);
+        accountService.createSavingsAccount(holder);
+        BankAccount studentAccount = accountService.createStudentAccount(holder, "DELTA");
+        IO.println("=========");
 
-        IO.println("WITH LOGGER");
-        AccountService withLogger = new LoggingAccountService(original);
-        withLogger.createBusinessAccount(holder);
-        IO.println("========");
+        IO.println(xmlSerializer.serialize(currentAccount));
+        IO.println(xmlSerializer.serializeAll(accountService.getBankAccounts()));
 
-        IO.println("WITH TIME LOGGER");
-        AccountService withTimeLogger = new TimeLoggingAccountService(original);
-        withTimeLogger.createSavingsAccount(holder);
-        IO.println("========");
-
-        IO.println("WITH LOGGER AND TIME LOGGER");
-        AccountService withLoggerAndTimeLogger =
-                new TimeLoggingAccountService(new LoggingAccountService(original));
-        BankAccount studentAccount = withLoggerAndTimeLogger.createStudentAccount(holder, "DELTA");
-        IO.println("========");
-
-        BankAccount businessAccount = original.getBankAccounts().get(1);
-
-        BankAccountSerializer bankAccountJsonSerializer = new BankAccountGsonSerializer();
-        BankAccountSerializer bankAccountXmlSerializer = new BankAccountXmlSerializer();
-
-        IO.println(bankAccountXmlSerializer.serialize(currentAccount));
-        IO.println(bankAccountXmlSerializer.serializeAll(original.getBankAccounts()));
-
-        IO.println(bankAccountJsonSerializer.serialize(currentAccount));
-        IO.println(bankAccountJsonSerializer.serializeAll(original.getBankAccounts()));
-
-        TransferLoggerService transferLoggerService = new TransferLoggerService();
-        DepositService depositService = new DepositService(transferLoggerService);
-        TransferService transferService = new TransferService(transferLoggerService);
+        IO.println(jsonSerializer.serialize(currentAccount));
+        IO.println(jsonSerializer.serializeAll(accountService.getBankAccounts()));
 
         IO.println(currentAccount.getAccountNumber());
         depositService.deposit(currentAccount, 5000);

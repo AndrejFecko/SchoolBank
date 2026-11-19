@@ -9,7 +9,7 @@ public class TransferService {
 
     private static final double BUSINESS_TRANSFER_FEE_RATE = 0.003;
 
-    private TransferLoggerService transferLoggerService;
+    private final TransferLoggerService transferLoggerService;
 
     public TransferService(TransferLoggerService transferLoggerService) {
         this.transferLoggerService = transferLoggerService;

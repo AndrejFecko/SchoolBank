@@ -8,7 +8,7 @@ import history.TransferLoggerService;
 public class WithdrawService {
     private static final double BUSINESS_SERVICE_FEE = 0.01;
 
-    private TransferLoggerService transferLoggerService;
+    private final TransferLoggerService transferLoggerService;
 
     public WithdrawService(TransferLoggerService transferLoggerService) {
         this.transferLoggerService = transferLoggerService;

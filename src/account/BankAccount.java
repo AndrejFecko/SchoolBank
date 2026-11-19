@@ -1,6 +1,5 @@
 package account;
 
-import notifier.ConsoleNotifierService;
 import notifier.NotifierService;
 import person.AccountHolder;
 import java.util.UUID;
@@ -12,9 +11,10 @@ public abstract class BankAccount {
     private String accountNumber;
     private double balance;
 
-    private NotifierService notifier = new ConsoleNotifierService();
+    private final NotifierService notifier;
 
-    public BankAccount(String accountNumber, AccountHolder accountHolder) {
+    public BankAccount(String accountNumber, AccountHolder accountHolder, NotifierService notifier) {
+        this.notifier = notifier;
         this.uuid = UUID.randomUUID().toString();
         this.balance = 0;
         this.accountNumber = accountNumber;
