@@ -1,5 +1,6 @@
 package account;
 
+import currency.Currency;
 import notifier.NotifierService;
 import person.AccountHolder;
 import java.util.UUID;
@@ -10,11 +11,13 @@ public abstract class BankAccount {
     private AccountHolder accountHolder;
     private String accountNumber;
     private double balance;
+    private Currency currency;
 
     private final NotifierService notifier;
 
-    public BankAccount(String accountNumber, AccountHolder accountHolder, NotifierService notifier) {
+    public BankAccount(String accountNumber, AccountHolder accountHolder, Currency currency, NotifierService notifier) {
         this.notifier = notifier;
+        this.currency = currency;
         this.uuid = UUID.randomUUID().toString();
         this.balance = 0;
         this.accountNumber = accountNumber;
@@ -39,6 +42,18 @@ public abstract class BankAccount {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public String getFormattedBalance() {
+        return currency.format(balance);
     }
 
     public void add(double amount){

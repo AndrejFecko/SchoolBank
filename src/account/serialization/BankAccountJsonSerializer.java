@@ -41,6 +41,8 @@ public class BankAccountJsonSerializer implements BankAccountSerializer {
         builder.append("{");
         builder.append("\"accountNumber\": ");
         builder.append("\"").append(bankAccountSerialize.accountNumber).append("\"");
+        builder.append(", \"currency\": ");
+        builder.append("\"").append(bankAccountSerialize.currency).append("\"");
         builder.append("}");
 
         return builder.toString();

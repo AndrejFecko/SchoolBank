@@ -3,6 +3,7 @@ package transfer;
 import account.BankAccount;
 import account.BusinessAccount;
 import account.StudentAccount;
+import currency.CurrencyConverter;
 import history.TransferLoggerService;
 
 public class TransferService {
@@ -10,9 +11,11 @@ public class TransferService {
     private static final double BUSINESS_TRANSFER_FEE_RATE = 0.003;
 
     private final TransferLoggerService transferLoggerService;
+    private final CurrencyConverter currencyConverter;
 
-    public TransferService(TransferLoggerService transferLoggerService) {
+    public TransferService(TransferLoggerService transferLoggerService, CurrencyConverter currencyConverter) {
         this.transferLoggerService = transferLoggerService;
+        this.currencyConverter = currencyConverter;
     }
 
     public void transfer(BankAccount fromAccount, BankAccount toAccount, double amount) {
@@ -41,12 +44,14 @@ public class TransferService {
         }
 
         fromAccount.setBalance(newBalance);
-        toAccount.setBalance(toAccount.getBalance() + amount);
+        double receivedAmount = currencyConverter.convert(amount, fromAccount.getCurrency(), toAccount.getCurrency());
+        toAccount.setBalance(toAccount.getBalance() + receivedAmount);
 
         transferLoggerService.logTransfer(
                 fromAccount.getAccountNumber(),
                 toAccount.getAccountNumber(),
-                amount
+                amount,
+                fromAccount.getCurrency()
         );
     }
 

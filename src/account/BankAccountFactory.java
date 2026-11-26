@@ -1,5 +1,6 @@
 package account;
 
+import currency.Currency;
 import notifier.NotifierService;
 import person.AccountHolder;
 
@@ -13,23 +14,23 @@ public class BankAccountFactory {
         this.notifierService = notifierService;
     }
 
-    public CurrentAccount newCurrentAccount(AccountHolder accountHolder) {
+    public CurrentAccount newCurrentAccount(AccountHolder accountHolder, Currency currency) {
         String accountNumber = accountNumberGenerator.generate();
-        return new CurrentAccount(accountNumber, accountHolder, notifierService);
+        return new CurrentAccount(accountNumber, accountHolder, currency, notifierService);
     }
 
-    public BusinessAccount newBusinessAccount(AccountHolder accountHolder) {
+    public BusinessAccount newBusinessAccount(AccountHolder accountHolder, Currency currency) {
         String accountNumber = accountNumberGenerator.generate();
-        return new BusinessAccount(accountNumber, accountHolder, notifierService);
+        return new BusinessAccount(accountNumber, accountHolder, currency, notifierService);
     }
 
-    public StudentAccount newStudentAccount(AccountHolder accountHolder, String schoolName) {
+    public StudentAccount newStudentAccount(AccountHolder accountHolder, String schoolName, Currency currency) {
         String accountNumber = accountNumberGenerator.generate();
-        return new StudentAccount(accountNumber, accountHolder, schoolName, notifierService);
+        return new StudentAccount(accountNumber, accountHolder, schoolName, currency, notifierService);
     }
 
-    public SavingsAccount newSavingsAccount(AccountHolder accountHolder) {
+    public SavingsAccount newSavingsAccount(AccountHolder accountHolder, Currency currency) {
         String accountNumber = accountNumberGenerator.generate();
-        return new SavingsAccount(accountNumber, accountHolder, notifierService);
+        return new SavingsAccount(accountNumber, accountHolder, currency, notifierService);
     }
 }

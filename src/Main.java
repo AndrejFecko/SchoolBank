@@ -2,6 +2,9 @@ import account.*;
 import account.serialization.BankAccountSerializer;
 import container.Container;
 import container.ContainerFactory;
+import currency.Currency;
+import currency.CurrencyConverter;
+import currency.CurrencyExchangeService;
 import history.TransferLoggerService;
 import person.AccountHolder;
 import person.AccountHolderService;
@@ -19,6 +22,7 @@ public class Main {
         AccountService accountService = container.getAccountService();
         DepositService depositService = container.getDepositService();
         TransferService transferService = container.getTransferService();
+        CurrencyExchangeService currencyExchangeService = container.getCurrencyExchangeService();
         TransferLoggerService transferLoggerService = container.getTransferLoggerService();
         BankAccountSerializer jsonSerializer = container.getJsonSerializer();
         BankAccountSerializer xmlSerializer = container.getXmlSerializer();
@@ -27,10 +31,10 @@ public class Main {
 
         IO.println("CREATING ACCOUNTS");
         IO.println("=========");
-        BankAccount currentAccount = accountService.createCurrentAccount(holder);
-        BankAccount businessAccount = accountService.createBusinessAccount(holder);
-        accountService.createSavingsAccount(holder);
-        BankAccount studentAccount = accountService.createStudentAccount(holder, "DELTA");
+        BankAccount currentAccount = accountService.createCurrentAccount(holder, Currency.CZK);
+        BankAccount businessAccount = accountService.createBusinessAccount(holder, Currency.EUR);
+        accountService.createSavingsAccount(holder, Currency.USD);
+        BankAccount studentAccount = accountService.createStudentAccount(holder, "DELTA", Currency.CZK);
         IO.println("=========");
 
         IO.println(xmlSerializer.serialize(currentAccount));
@@ -41,15 +45,28 @@ public class Main {
 
         IO.println(currentAccount.getAccountNumber());
         depositService.deposit(currentAccount, 5000);
-        depositService.deposit(businessAccount, 10000);
+        depositService.deposit(businessAccount, 1000);
 
         printBalances(currentAccount, businessAccount, studentAccount);
+
+        CurrencyConverter converter = container.getCurrencyConverter();
+        IO.println("Current v EUR:  " + converter.formatConverted(currentAccount.getBalance(), currentAccount.getCurrency(), Currency.EUR));
+        IO.println("Business v CZK: " + converter.formatConverted(businessAccount.getBalance(), businessAccount.getCurrency(), Currency.CZK));
 
         transferService.transfer(currentAccount, studentAccount, 1000);
         printBalances(currentAccount, businessAccount, studentAccount);
 
-        transferService.transfer(businessAccount, currentAccount, 2000);
+        transferService.transfer(businessAccount, currentAccount, 80);
         printBalances(currentAccount, businessAccount, studentAccount);
+
+        currencyExchangeService.exchange(studentAccount, Currency.EUR);
+        printBalances(currentAccount, businessAccount, studentAccount);
+
+        try {
+            currencyExchangeService.exchange(studentAccount, Currency.EUR);
+        } catch (IllegalArgumentException e) {
+            IO.println("Zachycena chyba: " + e.getMessage());
+        }
 
         try {
             transferService.transfer(currentAccount, studentAccount, -500);
@@ -73,8 +90,8 @@ public class Main {
     }
 
     private static void printBalances(BankAccount current, BankAccount business, BankAccount student) {
-        IO.println("Current:  " + current.getBalance() + " Kč");
-        IO.println("Business: " + business.getBalance() + " Kč");
-        IO.println("Student:  " + student.getBalance() + " Kč");
+        IO.println("Current:  " + current.getFormattedBalance());
+        IO.println("Business: " + business.getFormattedBalance());
+        IO.println("Student:  " + student.getFormattedBalance());
     }
 }
